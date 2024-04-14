@@ -79,15 +79,14 @@ Note that running this command will require sudo permisions.
 
 Make sure that once your are done running, you run the following command:
 
-.. code-block::bash
+.. code-block:: bash
 
     cargo run --teardown
 
 
-
 To avoid going command by command, we can run the ``run.sh`` script:
 
-.. code-block::bash
+.. code-block:: bash
 
     ./run.sh
 
