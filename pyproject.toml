@@ -6,3 +6,4 @@ build-backend = "flit_core.buildapi"
 name = "Failover"
 authors = [{name = "Paul Wekesa", email = "graziella@lumache"}]
 dynamic = ["version", "description"]
+urls.Source = "https://github.com/Paul-weqe/failover"
