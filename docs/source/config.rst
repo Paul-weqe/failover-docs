@@ -18,11 +18,13 @@ File Configuration
 File configuration in Failover is carried out via JSON files.
 
 First things first, let us start with where the files are stored.
-If you installed Failover via ``snap``, your json configuration is stored in: ``/var/snap/failover/common/vrrp-config.json``.
-If you are running Fialover via cargo, your json configurations are stored in: ``/etc/failover/vrrp-config.json``.
+If you installed Failover via ``snap``, Failover is run by default via ``file-mode`` and your json configuration
+is stored in: ``/var/snap/failover/common/vrrp-config.json``. If you are running Fialover via cargo,
+your json configurations are stored in: ``/etc/failover/vrrp-config.json``.
 
 However, when running via the cargo install, you can customize which json configuration file the it should use by the
-``--file`` subcommand. So you will run the command: ``cargo run --bin failover --file /custom/path/custom-file.json``.
+``--filename`` subcommand. So you will run the command:
+``./target/debug/failover file-mode --filename /custom/path/custom-file.json``.
 
 Now that JSON file location is out of the way, the following is a sample of how the
 JSON configuration files should look like:
@@ -103,36 +105,28 @@ The following are the configuration options on CLI:
 
 .. code-block:: bash
 
+    Usage: failover cli-mode [OPTIONS] --vrid <VRID> --interface-name <INTERFACE_NAME>
+
     Options:
-        -H, --help          display help information
-        -C, --cli           use the cli config option
-        -A, --action (--action teardown / --action run)
-                            action that will be done to the addresses on the
-                            interface configured. Default is 'run'
-        -n, --name (--name VR_1)
-                            name of the virtual router instance.
-        -v, --vrid (--vrid 51)
-                            The Virtual Router ID of the instance. In the range of
-                            1-255
-        -I, --ip-address (--ip-address 192.168.100.5/24)
-                            An Ip address that is associated with the virtual
-                            router instance
-        -i, --iface (--iface eth0)
-                            The interfaece that the virtual IP(s) will be attached
-                            to.
-        -p, --priority (--priority 100)
-                            priority of the virutal router in the VRRP network
-                            group. In the range 1-44
-        -a, --adv-interval (--adv-interval 2)
-                            When in master, the interval when ADVERTISEMENTS
-                            should be carried across
-        -P, --preempt-mode (--preempt-mode false)
-                            Controls whether a higher priority Backup router
-                            preempts a lower priority Master.
-        -f, --file (--file FILENAME)
-                            the json file with the necessary configurations. By
-                            default will be looked for at:
-                            '{CURRENT_PATH}/vrrp-config.json'
+          --name <NAME>
+              The name of the Virtual Router Instance. e.g `VR_1`
+          --vrid <VRID>
+              Virtual Router ID of the Virtual router instance.
+          --ip-address <IP_ADDRESS>...
+              The IP Address(es) of that will the Virtual router will be assigned. Can be more than one.
+          --interface-name <INTERFACE_NAME>
+              name of the network interface where the Virtual Router instance will be attached.
+          --priority <PRIORITY>
+              The priority of this instance of the Virtual Router, maximum of 255. The higher priority is chosen to be MASTER. [default: 100]
+          --advert-interval <ADVERT_INTERVAL>
+              [default: 1]
+          --preempt-mode
+              (highly adviced to be called). When true, the higher priority will always preempt the lower priority.
+          --action
+                Specifies the action we are trying to run on the Virtual Router ('run' or 'teardown').
+                'run' is when we are setting up the Virtual router for VRRP. 'teardown' is when we are finished with it.
+      -h, --help
+              Print help
 
 
 As specified before, ``VRID``, ``interface_name`` and ``ip_addresses`` fields are the only compulsory fields, although
@@ -142,12 +136,14 @@ The following is a cli configuration does the exact thing as the first JSON file
 
 .. code-block:: bash
 
-    cargo run --bin failover --cli --name VR_1 --iface wlo1 --ip-address 192.168.100.100/24 --priority 101 --adv-interval 1 --preempt-mode true
+    ./target/debug/failover cli-mode --preempt-mode --name VR_1 --vrid 51 --interface-name wlo1 --ip-address 192.168.100.100/24 --priority 101 --advert-interval 1
 
-More to come, but for now:
+
+There is more to come, but for now:
 
 .. image:: https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWJiZHNtYWtvNG53bHYwNnR5dHN5NjdlcGtnaTJ3YmN2dXh3czdteCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lTpme2Po0hkqI/giphy.gif
      :width: 400
      :alt: That's all folks
 
+Feel free to `contribute <https://github.com/Paul-weqe/failover>`_ in this project's codebase and also in the `docs <https://github.com/failover-docs>`_.
 

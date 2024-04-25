@@ -47,15 +47,23 @@ If you already have cargo installed in your system, build the project:
 
 .. code-block:: bash
 
-    cargo run --bin failover
+    cargo build
 
-Note that running this command will require sudo permisions.
 
-Make sure that once your are done running, you run the following command:
+We can now run the project:
 
 .. code-block:: bash
 
-    cargo run --bin failover --teardown
+    # the following will require sudo permissions
+    ./target/debug/failover file-mode
+
+Make sure that you are root as you are running the above command.
+
+When you are done running `failover`, make sure to take it down via the following command:
+
+.. code-block:: bash
+
+    ./target/debug/failover file-mode --teardown
 
 
 To avoid going command by command, we can run the ``run.sh`` script immediately after cloning the repository:
@@ -63,3 +71,7 @@ To avoid going command by command, we can run the ``run.sh`` script immediately 
 .. code-block:: bash
 
     ./run.sh
+
+
+There are two command modes you can run Failover with; ``cli-mode`` and ``file-mode``.
+The next section will cover how to configure and handle both.
