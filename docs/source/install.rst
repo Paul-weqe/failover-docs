@@ -29,9 +29,9 @@ You should see the application running successfully if everything is okay, you s
 When installed via `snap`, the Failover configs will be stored at ``/var/snap/failover/common/vrrp-config.json``.
 Look at the
 
-+++++++++++++++++++++++++++
-Running via cargo build
-+++++++++++++++++++++++++++
++++++++++++++++++++++++++
+Running from manual build
++++++++++++++++++++++++++
 
 Some may choose to install the project via a manual build using `cargo <https://doc.rust-lang.org/cargo/>`_.
 This will need us to have cargo and rust both installed in our system.
@@ -75,3 +75,52 @@ To avoid going command by command, we can run the ``run.sh`` script immediately 
 
 There are two command modes you can run Failover with; ``cli-mode`` and ``file-mode``.
 The next section will cover how to configure and handle both.
+
+
+++++++++++++++++++++++++++
+Running as Library in Rust
+++++++++++++++++++++++++++
+
+If we need to use VRRP as part of a project, we can also call Failover as part of our Rust project in Rust.
+
+Run the following command:
+
+.. code-block:: bash
+
+    cargo add failover_vr
+
+
+We can then use it in our Rust program like follows:
+
+.. code-block:: rust
+
+    use failover_vr::{self, router::VirtualRouter};
+    use ipnet::Ipv4Net;
+    use std::net::Ipv4Addr;
+    use tokio;
+    use simple_logger::SimpleLogger;
+
+    #[tokio::main]
+    async fn main() {
+        SimpleLogger::new().with_colors(true).init().unwrap();
+
+        let vrouter = VirtualRouter::new(
+            String::from("VR_1"),
+            51,
+            vec![
+                Ipv4Net::new(Ipv4Addr::new(192, 168, 100, 120), 24).unwrap()
+            ],
+            101,
+            1,
+            true,
+            String::from("wlo1")
+        );
+        tokio::spawn(async {
+            failover_vr::run(vrouter).await
+        }).await;
+
+    }
+
+
+You can customize this to add your Virtual Routers with your environment specific parameters and they will work as
+required
