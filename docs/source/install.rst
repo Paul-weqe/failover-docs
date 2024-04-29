@@ -87,35 +87,38 @@ Run the following command:
 
 .. code-block:: bash
 
-    cargo add failover-vrrp
+    cargo add failover_vr
 
 
 We can then use it in our Rust program like follows:
 
 .. code-block:: rust
 
-    use failover::{self, router::VirtualRouter};
+    use failover_vr::{self, router::VirtualRouter};
     use ipnet::Ipv4Net;
     use std::net::Ipv4Addr;
     use tokio;
+    use simple_logger::SimpleLogger;
 
+    #[tokio::main]
     async fn main() {
+        SimpleLogger::new().with_colors(true).init().unwrap();
 
         let vrouter = VirtualRouter::new(
             String::from("VR_1"),
             51,
             vec![
-                Ipv4Net::new(Ipv4Addr::new(192, 168, 100, 120), 24)
+                Ipv4Net::new(Ipv4Addr::new(192, 168, 100, 120), 24).unwrap()
             ],
             101,
-            advert_interval: 1,
-            preempt_mode: true,
-            network_interface: String::from("wlo1")
+            1,
+            true,
+            String::from("wlo1")
         );
-
         tokio::spawn(async {
-            failover::run(vrouter).await
+            failover_vr::run(vrouter).await
         }).await;
+
     }
 
 
